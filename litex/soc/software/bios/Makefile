@@ -10,7 +10,7 @@ ifdef TFTP_SERVER_PORT
 CFLAGS += -DTFTP_SERVER_PORT=$(TFTP_SERVER_PORT)
 endif
 
-OBJECTS=isr.o sdram.o sdcard.o main.o boot-helper-$(CPU).o boot.o readline.o
+OBJECTS=isr.o sdram.o sdcard.o main.o boot-helper-$(CPU).o boot.o readline.o command.o helpers.o
 
 all: bios.bin
 
