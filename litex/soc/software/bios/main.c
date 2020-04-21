@@ -47,6 +47,9 @@
 #include "readline.h"
 #include "helpers.h"
 
+extern initcall_t __bios_initcalls_start[], __bios_initcalls_end[];
+initcall_t *initcall;
+
 /* General address space functions */
 
 static void mr(char *startaddr, char *len)
@@ -576,6 +579,9 @@ int main(int i, char **c)
 		printf("Memory initialization failed\n");
 	printf("\n");
 #endif
+
+	for (initcall = __bios_initcalls_start; initcall < __bios_initcalls_end; initcall++)
+		(*initcall)();
 
 	if(sdr_ok) {
 		printf("--============== \e[1mBoot\e[0m ==================--\n");

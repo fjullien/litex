@@ -56,6 +56,14 @@ SECTIONS
 		_end = .;
 	} > sram
 
+	.init_calls :
+	{
+		PROVIDE_HIDDEN (__bios_initcalls_start = .);
+		KEEP(*(.initcall.0))
+		KEEP(*(.initcall.1))
+		PROVIDE_HIDDEN (__bios_initcalls_end = .);
+	} > rom
+
 	/DISCARD/ :
 	{
 		*(.eh_frame)
