@@ -12,5 +12,6 @@ typedef int (*initcall_t)(void);
 
 void dump_bytes(unsigned int *ptr, int count, unsigned long addr);
 void crcbios(void);
+int get_param(char *buf, char **cmd, char **params);
 
 #endif

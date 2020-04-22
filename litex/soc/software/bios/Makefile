@@ -10,7 +10,22 @@ ifdef TFTP_SERVER_PORT
 CFLAGS += -DTFTP_SERVER_PORT=$(TFTP_SERVER_PORT)
 endif
 
-OBJECTS=isr.o sdram.o sdcard.o main.o boot-helper-$(CPU).o boot.o readline.o command.o helpers.o
+OBJECTS= \
+isr.o \
+sdram.o \
+sdcard.o \
+main.o \
+boot-helper-$(CPU).o \
+boot.o \
+readline.o \
+helpers.o \
+cmd_mem_access.o \
+cmd_spi_flash.o \
+cmd_bios.o \
+cmd_boot.o \
+cmd_dram.o \
+cmd_sdcard.o \
+cmd_usddrphy.o
 
 all: bios.bin
 
@@ -47,6 +62,9 @@ endif
 -include $(OBJECTS:.o=.d)
 
 %.o: $(BIOS_DIRECTORY)/%.c
+	$(compile)
+
+%.o: $(BIOS_DIRECTORY)/commands/%.c
 	$(compile)
 
 %.o: $(BIOS_DIRECTORY)/%.S

@@ -26,6 +26,21 @@ SECTIONS
 		_erodata = .;
 	} > rom
 
+	.init_calls :
+	{
+		PROVIDE_HIDDEN (__bios_initcalls_start = .);
+		KEEP(*(.initcall.0))
+		KEEP(*(.initcall.1))
+		PROVIDE_HIDDEN (__bios_initcalls_end = .);
+	} > rom
+
+	.commands :
+	{
+		PROVIDE_HIDDEN (__bios_cmd_start = .);
+		KEEP(*(.bios_cmd))
+		PROVIDE_HIDDEN (__bios_cmd_end = .);
+	} > rom
+
 	.data :
 	{
 		. = ALIGN(8);
@@ -55,14 +70,6 @@ SECTIONS
 		_ebss = .;
 		_end = .;
 	} > sram
-
-	.init_calls :
-	{
-		PROVIDE_HIDDEN (__bios_initcalls_start = .);
-		KEEP(*(.initcall.0))
-		KEEP(*(.initcall.1))
-		PROVIDE_HIDDEN (__bios_initcalls_end = .);
-	} > rom
 
 	/DISCARD/ :
 	{

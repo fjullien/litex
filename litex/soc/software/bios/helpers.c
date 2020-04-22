@@ -6,9 +6,11 @@
 #include <stdio.h>
 #include <console.h>
 #include <crc.h>
+#include <string.h>
 
 #include "readline.h"
 #include "helpers.h"
+#include "command.h"
 
 extern unsigned int _ftext, _edata;
 
@@ -19,28 +21,28 @@ void dump_bytes(unsigned int *ptr, int count, unsigned long addr)
 	int line_bytes = 0, i = 0;
 
 	putsnonl("Memory dump:");
-	while(count > 0){
+	while (count > 0) {
 		line_bytes =
 			(count > NUMBER_OF_BYTES_ON_A_LINE)?
 				NUMBER_OF_BYTES_ON_A_LINE : count;
 
 		printf("\n0x%08x  ", addr);
-		for(i=0;i<line_bytes;i++)
+		for (i = 0; i < line_bytes; i++)
 			printf("%02x ", *(unsigned char *)(data+i));
 
-		for(;i<NUMBER_OF_BYTES_ON_A_LINE;i++)
+		for (; i < NUMBER_OF_BYTES_ON_A_LINE; i++)
 			printf("   ");
 
 		printf(" ");
 
-		for(i=0;i<line_bytes;i++) {
-			if((*(data+i) < 0x20) || (*(data+i) > 0x7e))
+		for (i = 0; i<line_bytes; i++) {
+			if ((*(data+i) < 0x20) || (*(data+i) > 0x7e))
 				printf(".");
 			else
 				printf("%c", *(data+i));
 		}
 
-		for(;i<NUMBER_OF_BYTES_ON_A_LINE;i++)
+		for (; i < NUMBER_OF_BYTES_ON_A_LINE; i++)
 			printf(" ");
 
 		data += (char)line_bytes;
@@ -67,10 +69,61 @@ void crcbios(void)
 	expected_crc = _edata;
 	length = (unsigned long)&_edata - offset_bios;
 	actual_crc = crc32((unsigned char *)offset_bios, length);
-	if(expected_crc == actual_crc)
+	if (expected_crc == actual_crc)
 		printf(" BIOS CRC passed (%08x)\n", actual_crc);
 	else {
 		printf(" BIOS CRC failed (expected %08x, got %08x)\n", expected_crc, actual_crc);
 		printf(" The system will continue, but expect problems.\n");
 	}
+}
+
+int get_param(char *buf, char **cmd, char **params)
+{
+	int nb_param = 0;
+	int i;
+
+	for (i = 0; i < MAX_PARAM; i++)
+		params[i] = NULL;
+
+	*cmd = buf;
+
+	while ((*buf != ' ') && (*buf !=0))
+		buf++;
+
+	if (*buf == 0)
+		return nb_param;
+
+	*buf++ = 0;
+
+	while (1) {
+		while ((*buf == ' ') && (*buf !=0))
+			buf++;
+
+
+		if (*buf == 0)
+			return nb_param;
+
+		params[nb_param++] = buf;
+
+		while ((*buf != ' ') && (*buf !=0))
+			buf++;
+
+		if (*buf == 0)
+			return nb_param;
+		*buf++ = 0;
+	}
+}
+
+struct command_struct *command_dispatcher(char *command, int nb_params, char **params)
+{
+	struct command_struct * const *cmd;
+
+	for (cmd = __bios_cmd_start; cmd != __bios_cmd_end; cmd++) {
+		if (!strcmp(command, (*cmd)->name)) {
+			(*cmd)->func(nb_params, params);
+			return (*cmd);
+		}
+	}
+
+	return NULL;
 }
