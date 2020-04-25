@@ -28,6 +28,7 @@ cmd_sdcard.o \
 cmd_usddrphy.o
 
 all: bios.bin
+	$(PYTHON) -m litex.soc.software.memusage bios.elf $(CURDIR)/../include/generated/regions.ld
 
 %.bin: %.elf
 	$(OBJCOPY) -O binary $< $@
