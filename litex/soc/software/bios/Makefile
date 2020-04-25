@@ -19,6 +19,7 @@ boot-helper-$(CPU).o \
 boot.o \
 readline.o \
 helpers.o \
+complete.o \
 cmd_mem_access.o \
 cmd_spi_flash.o \
 cmd_bios.o \
@@ -42,7 +43,6 @@ else
 endif
 
 bios.elf: $(BIOS_DIRECTORY)/linker.ld $(OBJECTS)
-
 
 %.elf: ../libbase/crt0-$(CPU)-ctr.o ../libnet/libnet.a ../libbase/libbase-nofloat.a ../libcompiler_rt/libcompiler_rt.a
 	$(LD) $(LDFLAGS) -T $(BIOS_DIRECTORY)/linker.ld -N -o $@ \

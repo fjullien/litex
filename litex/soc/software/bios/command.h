@@ -2,6 +2,8 @@
 #define __COMMAND_H__
 
 #define MAX_PARAM	8
+#define CMD_MAX_SIZE	32	/* Used in string list, complete.c */
+#define MAX_CMDS	40	/* Used in string list, complete.c */
 
 struct command_struct {
 	void (*func)(int nb_params, char **params);
