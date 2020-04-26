@@ -21,14 +21,14 @@ def print_usage(bios,regions):
 
     elffile = ELFFile(open(bios, "rb"))
     rom_usage += elffile.get_section_by_name('.text').data_size
-    rom_usage = elffile.get_section_by_name('.rodata').data_size
+    rom_usage += elffile.get_section_by_name('.rodata').data_size
+    rom_usage += elffile.get_section_by_name('.data').data_size
     section = elffile.get_section_by_name('.commands')
     if section:
         rom_usage += section.data_size
     section = elffile.get_section_by_name('.initcalls')
     if section:
         rom_usage += section.data_size
-    ram_usage += elffile.get_section_by_name('.data').data_size
     ram_usage += elffile.get_section_by_name('.bss').data_size
 
     print("\nROM usage: {:.2f}KiB \t({:.2f}%)".format(rom_usage / 1024.0, rom_usage / rom_size * 100.0))
